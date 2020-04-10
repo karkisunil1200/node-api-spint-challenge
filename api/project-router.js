@@ -45,4 +45,39 @@ router.post('/', (req, res) => {
     });
 });
 
+router.put('/:id', (req, res) => {
+  const {id} = req.params;
+  const changes = req.body;
+
+  db.update(id, changes)
+    .then(project => {
+      if (project) {
+        res.status(200).json(project);
+      } else if (!project) {
+        res.status(404).json({message: 'The project with that ID does not exist'});
+      } else {
+        res.status(400).json({message: 'Please provide name or description for the project'});
+      }
+    })
+    .catch(err => {
+      res.status(500).json({message: 'Something really went wrong'});
+    });
+});
+
+router.delete('/:id', (req, res) => {
+  const {id} = req.params;
+
+  db.remove(id)
+    .then(project => {
+      if (project) {
+        res.status(200).json(project);
+      } else {
+        res.status(404).json({message: 'project with that ID not found'});
+      }
+    })
+    .catch(err => {
+      res.status(500).json({message: 'Could not delete the request'});
+    });
+});
+
 module.exports = router;
