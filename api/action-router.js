@@ -45,8 +45,39 @@ router.post('/', (req, res) => {
     });
 });
 
-router.put('/:id', (req, res) => {});
+router.put('/:id', (req, res) => {
+  const {id} = req.params;
+  const changes = req.body;
 
-router.delete('/:id', (req, res) => {});
+  db.update(id, changes)
+    .then(action => {
+      if (action) {
+        res.status(200).json(action);
+      } else if (!id) {
+        res.status(404).json({message: 'The provided ID does not match'});
+      } else {
+        res.status(400).json({message: 'You are missing either project_id, description or notes'});
+      }
+    })
+    .catch(err => {
+      res.status(500).json({message: 'the infomation could not be changed'});
+    });
+});
+
+router.delete('/:id', (req, res) => {
+  const {id} = req.params;
+
+  db.remove(id)
+    .then(action => {
+      if (action) {
+        res.status(200).json(action);
+      } else {
+        res.status(404).json({message: 'The ID you does not exist'});
+      }
+    })
+    .catch(err => {
+      res.status(500).json({message: 'The information could not be deleted'});
+    });
+});
 
 module.exports = router;
