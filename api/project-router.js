@@ -29,4 +29,20 @@ router.get('/:id', (req, res) => {
     });
 });
 
+router.post('/', (req, res) => {
+  const data = req.body;
+
+  db.insert(data)
+    .then(project => {
+      if (project) {
+        res.status(201).json(project);
+      } else {
+        res.status(404).json({message: 'please provide name or description'});
+      }
+    })
+    .catch(err => {
+      res.status(500).json({message: 'Project could not be posted'});
+    });
+});
+
 module.exports = router;
